@@ -11,16 +11,20 @@
 	<thead>
 		<tr>
 			<th scope="col">#</th>
+			<th scope="col">Category</th>
 			<th scope="col">Name</th>
 			<th scope="col">Email</th>
+			<th scope="col">Edit</th>
 		</tr>
 	</thead>
 	<tbody>
 	@foreach (var member in Model) {
 		<tr>
 			<th scope="row">@member.Id</th>
+			<th scope="row">@member.Id</th>
 			<td>@member.Name</td>
 			<td>@member.Email</td>
+            <td><button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#EditMemberModal" onclick="">Edit Member</button></td>
 		</tr>
 	}
 	</tbody>
@@ -36,16 +40,21 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label for="Name">Member Name</label>
-						<input type="text" class="form-control" id="Name" name="Name" placeholder="John Smith" />
-					</div>
-					<div class="form-group">
-						<label for="Email">Email Address</label>
-						<input type="email" class="form-control" id="Email" name="Email" placeholder="you@awesome.com" />
-					</div>
-				</div>
+                <div class="modal-body" id="modal-body">
+                    <div class="form-group">
+                        <label for="Name">Member Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="John Smith" required />
+
+                    </div>
+                    <div class="form-group">
+                        <label for="Category">Category</label>
+                        <input type="text" class="form-control" id="Category" name="Category" placeholder="What Category do you belong???" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email Address</label>
+                        <input type="email" class="form-control" id="Email" name="Email" placeholder="you@awesome.com" required />
+                    </div>
+                </div>
 				<div class="modal-footer">
 					<input type="submit" class="btn btn-primary" value="Save" />
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -55,13 +64,61 @@
 	</div>
 </div>
 
+<div class="modal fade" id="EditMemberModal">
+    <div class="modal-dialog" role="document">
+        <form id="EditMemberForm" action="/Members/Edits" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Member</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div class="form-group">
+                        <label for="Name">Member Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="John Smith" required />
+
+                    </div>
+                    <div class="form-group">
+                        <label for="Category">Category</label>
+                        <input type="text" class="form-control" id="Category" name="Category" placeholder="What Category do you belong???" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email Address</label>
+                        <input type="email" class="form-control" id="Email" name="Email" placeholder="you@awesome.com" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script type="text/javascript">
-	$(document).ready(function () {
-		$("#NewMemberForm").ajaxForm({
-			success: function (formData, jqForm, options) {
-				// sure would be nice if we didn't have to reload the whole page...
-				document.location.reload();
-			}
-		});
-	});
+    $(document).ready(function () {
+        $("#NewMemberForm").ajaxForm({
+            success: function (formData, jqForm, options) {
+                // sure would be nice if we didn't have to reload the whole page...
+                document.location.reload();
+            }
+        });
+    });
+    $("#EditMemberForm").ajaxForm({
+        success: function (formData, jqForm, options) {
+                document.location.reload();
+            }
+        });
+    function loadMemberData(memberId) {
+        $.ajax({
+            url: "Url.Action("Details")",
+            data: { id: memberId },
+            success: function (data) {
+                $("#editMember-Modal-body").html(data);
+            }
+        })
+    }
 </script>

@@ -1,4 +1,6 @@
-﻿namespace Heuristics.TechEval.Core.Models {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Heuristics.TechEval.Core.Models {
 
 	public class Member {
 
