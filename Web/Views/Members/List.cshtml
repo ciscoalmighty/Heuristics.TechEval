@@ -10,10 +10,10 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th scope="col">#</th>
+            <th scope="col">@Html.ActionLink("Id", "List", new { sortOrder = ViewBag.IdSortParm })</th>
 			<th scope="col">Category</th>
-			<th scope="col">Name</th>
-			<th scope="col">Email</th>
+            <th scope="col">@Html.ActionLink("Name", "List", new { sortOrder = ViewBag.NameSortParm })</th>
+            <th scope="col">@Html.ActionLink("Email", "List", new { sortOrder = ViewBag.EmailSortParm })</th>
 			<th scope="col">Edit</th>
 		</tr>
 	</thead>
@@ -66,7 +66,7 @@
 
 <div class="modal fade" id="EditMemberModal">
     <div class="modal-dialog" role="document">
-        <form id="EditMemberForm" action="/Members/Edits" method="post">
+        <form id="EditMemberForm" action="/Members/Edit" method="post">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Member</h5>
@@ -112,12 +112,12 @@
                 document.location.reload();
             }
         });
-    function loadMemberData(memberId) {
+    function loadMemberData(memberName) {
         $.ajax({
-            url: "Url.Action("Details")",
+            url: "@Url.Action("Edit")",
             data: { id: memberId },
             success: function (data) {
-                $("#editMember-Modal-body").html(data);
+                $("#modal-body").html(data);
             }
         })
     }

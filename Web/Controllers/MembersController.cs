@@ -19,10 +19,29 @@ namespace Heuristics.TechEval.Web.Controllers {
 			_context = new DataContext();
 		}
 
-		public ActionResult List() {
-			var allMembers = _context.Members.ToList();
+		public ActionResult List(string sortOrder) {
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name" : "";
+			ViewBag.IdSortParm = sortOrder == "Id" ? "id_desc" : "Id";
+			ViewBag.EmailSortParm = sortOrder == "Email" ? "id_desc" : "Id";
+			var allMembers = from s in _context.Members
+							 select s;
+			switch (sortOrder)
+			{
+				case "Name":
+					allMembers = allMembers.OrderByDescending(s => s.Name);
+					break;
+				case "Id":
+					allMembers = allMembers.OrderBy(s => s.Id);
+					break;
+				case "date_desc":
+					allMembers = allMembers.OrderBy(s => s.Email);
+					break;
+				default:
+					allMembers = allMembers.OrderBy(s => s.Name);
+					break;
+			}
+			return View(allMembers.ToList());
 
-			return View(allMembers);
 		}
 
 		[HttpPost]
@@ -70,24 +89,23 @@ namespace Heuristics.TechEval.Web.Controllers {
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			var member = _context.Members.Find(id);
-			if (member == null)
+			var member = _context.Members.FirstOrDefault(x => x.Id == id);
+			Console.WriteLine(member);
+			if (member != null)
 			{
-				return HttpNotFound();
+				return View(member);
 			}
-			Response.RedirectToRoutePermanent("~/MembersController/List");
+			return HttpNotFound();
 		}
 
 		[HttpPost]
-		public Member Edit(Member member)
+		public ActionResult Edit(Member member)
         {
-			var editedMember = _context.Members.Find(member);
+			var editedMember = _context.Members.FirstOrDefault(x => x.Id == member.Id);
 			_context.Entry(editedMember).CurrentValues.SetValues(member);
 			_context.SaveChanges();
-			return editedMember;
-			Response.Redirect("~/MembersController/List");
-
-
+			return Json(JsonConvert.SerializeObject(editedMember));
+			; 
         }
 	}
 }
