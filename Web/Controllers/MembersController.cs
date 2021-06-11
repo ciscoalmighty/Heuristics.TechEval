@@ -51,7 +51,6 @@ namespace Heuristics.TechEval.Web.Controllers {
 				//checks to see if Email is used
 				if (CheckMemberEmail(data.Email) == false)
 				{
-					ModelState.AddModelError("ExisitingMemberError", "A member with that email already exists.");
 					return View();
 				};
 				var newMember = new Member
@@ -85,12 +84,7 @@ namespace Heuristics.TechEval.Web.Controllers {
 		[HttpGet]
 		public ActionResult Edit(int id)
 		{
-			if (id == 0)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-			var member = _context.Members.FirstOrDefault(x => x.Id == id);
-			Console.WriteLine(member);
+			Member member = _context.Members.FirstOrDefault(x => x.Id == id);
 			if (member != null)
 			{
 				return View(member);
@@ -99,13 +93,24 @@ namespace Heuristics.TechEval.Web.Controllers {
 		}
 
 		[HttpPost]
-		public ActionResult Edit(Member member)
+		public ActionResult Edit(EditMember member)
         {
-			var editedMember = _context.Members.FirstOrDefault(x => x.Id == member.Id);
-			_context.Entry(editedMember).CurrentValues.SetValues(member);
-			_context.SaveChanges();
-			return Json(JsonConvert.SerializeObject(editedMember));
-			; 
+			if (ModelState.IsValid)
+            {
+				var editedMember = _context.Members.Find(member.Id);
+				editedMember.Name = member.Name;
+				editedMember.Email = member.Email;
+				_context.SaveChanges();
+				return Json(JsonConvert.SerializeObject(editedMember));
+			}
+			return View(member);
+			
+        }
+
+		public Member GetMember (int Id)
+        {
+			Member member = _context.Members.FirstOrDefault(x => x.Id == Id);
+			return member;
         }
 	}
 }
